@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: repocortex
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  docker:
+    compose:
+      file: compose.yaml
+  ai:
+    # Chat goes through Spring AI's OpenAI starter to any OpenAI-compatible provider.
+    # base-url must include the version path; the client appends /chat/completions.
+    # To use OpenAI: base-url https://api.openai.com/v1, api-key ${OPENAI_API_KEY}, model gpt-4o-mini.
+    model:
+      # embeddings use our own client (app.embedding below); other OpenAI models are not used
+      embedding: none
+      image: none
+      audio:
+        speech: none
+        transcription: none
+      moderation: none
+    openai:
+      chat:
+        base-url: ${CHAT_BASE_URL:https://api.groq.com/openai/v1}
+        api-key: ${GROQ_API_KEY}
+        options:
+          model: ${CHAT_MODEL:openai/gpt-oss-20b}
+
+server:
+  port: 8080
+
+app:
+  github:
+    token: ${GITHUB_TOKEN}
+  cors:
+    allowed-origins: http://localhost:3000
+  # Any OpenAI-compatible POST {base-url}/embeddings endpoint.
+  # To use OpenAI: base-url https://api.openai.com/v1, api-key ${OPENAI_API_KEY}, model text-embedding-3-small.
+  embedding:
+    base-url: ${EMBEDDING_BASE_URL:https://generativelanguage.googleapis.com/v1beta/openai}
+    api-key: ${GEMINI_API_KEY}
+    model: ${EMBEDDING_MODEL:gemini-embedding-001}
+    # must match vector(1536) in the database schema
+    dimensions: 1536
+    # client-side pacing for free tiers (Gemini free: ~30k tokens/min); 0 = no limit
+    tokens-per-minute: ${EMBEDDING_TOKENS_PER_MINUTE:25000}

@@ -1,1 +1,12 @@
 .idea/
+.vscode/
+*.iml
+.env
+.env.local
+backend/target/
+frontend/node_modules/
+frontend/.next/
+CLAUDE.md
+.claude/
+frontend/AGENTS.md
+frontend/CLAUDE.md
